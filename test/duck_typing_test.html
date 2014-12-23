@@ -1,0 +1,97 @@
+<html>
+	<head>
+		<meta charset="utf8" />
+		<title>duck typing</title>
+		<script src="../lib/jquery-1.9.1.js"></script>
+		<script src="../duck-typing/duck-typing.js"></script>
+	</head>
+	<body>
+		<script>
+			var Person = (function() {
+				return {
+					init: function(opts) {
+						this.opts = $.extend({}, opts);
+						this.name = this.opts.name;
+						return this;	//it had better to return this
+					},
+					sayHello: function() {
+						console.log("Hello, I'm", this.name + ".");
+						return this;
+					}
+				};
+			})();
+
+			var Student = (function() {		//inherited from Person
+				return $.DTInherit({
+					sayHello: function() {
+						console.log("Hello, I'm", this.name + ", I'm a student.");
+						return this;
+					},
+					doingWhat: function() {
+						console.log("I'm learning");
+						return this;
+					}
+				}, Person);
+			})();
+
+			Programer = (function() {	//inherited from Person
+				return $.DTInherit({
+					sayHello: function() {
+						Person.sayHello.apply(this, arguments);		//call the ancestor's method
+						console.log("I'm a programer.");
+						return this;
+					}
+				}, Person);
+			})();
+
+			WorkingStudent = (function() {
+				return $.DTInherit({}, Student, Programer);	//multiple inheritance
+			})();
+
+			//instantiation
+			var s2 = $.DTNewObject(Student, {name: 'Jack'}).sayHello(),	//new Student({name: 'Jack'}).sayHello()
+				p2 = $.DTNewObject(Programer, {name: 'Ben'}).sayHello(),
+				w2 = $.DTNewObject(WorkingStudent, {name: 'Peter'}).sayHello().doingWhat();
+
+			console.log($.DTIsInstanceOf(w2, Student));	//true
+			console.log($.DTIsInstanceOf(w2, Programer));	//true
+			console.log($.DTIsInstanceOf(w2, WorkingStudent));	//true
+
+			console.log('========================single pattern===============================');
+			var Single = (function() {
+				var isInit = false;
+				var Single = {
+					index: 0,
+					init: function(opts) {
+						if (isInit) return Single;
+						this.opts = $.extend({}, opts);
+						this.index = this.opts.index;
+						isInit = true;
+						return Single = this;
+					},
+					getInstance: function(opts) {
+						return this.init(opts);
+					},
+					addIndex: function(step) {
+						this.index += step || 1;
+						return this;
+					},
+					getIndex: function() {
+						return this.index;
+					} 
+				}
+
+				return Single;
+			})();
+
+			var single1 = $.DTNewObject(Single, {index: 1}).addIndex(),
+				single2 = $.DTNewObject(Single, {index: 3}).addIndex();
+
+			console.log(single1.getIndex());	//3
+			console.log(single2.getIndex());	//3, not 4
+			console.log(Single.getInstance().getIndex());	//3
+			console.log(single1 === single2);	//true
+
+		</script>
+	</body>
+</html>

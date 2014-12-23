@@ -1,0 +1,93 @@
+<html>
+	<head>
+		<meta charset="utf8" />
+		<title>JS测试</title>
+		<script src="../lib/jquery-1.9.1.js"></script>
+		<script src="../curry-this/curry-this.js"></script>
+	</head>
+	<body>
+		<p id="mes"></p>
+		<script>
+			//reverse curry this
+			//make method reused as function
+			var forEach = Array.prototype.forEach.uncurryThis();
+			var printArgs = function() {
+				forEach(arguments, function(e, i) {
+					console.log(i+'. '+e);
+				});
+			}
+			printArgs('foo', 'bar', 'baz');
+
+			var toUpperCase = String.prototype.toUpperCase.uncurryThis();
+			console.log(['foo', 'bar', 'baz'].map(toUpperCase));
+
+			var PersonDirector = (function() {
+				return {
+					init: function(builder) {
+						this.builder = builder;
+					},
+					construct: function() {
+						this.builder.buildHead();
+						this.builder.buildBody();
+						this.builder.buildHand();
+						this.builder.buildFoot();
+					}
+				}
+			})();
+			var personBuilder = {
+				buildHead: function() { console.log('build head'); },
+				buildBody: function() { console.log('build body'); },
+				buildHand: function() { console.log('build hand'); },
+				buildFoot: function() { console.log('build foot'); },
+				getResult: function() { return 'get a person...'; }
+			};
+			PersonDirector.init(personBuilder);
+			PersonDirector.construct();
+			console.log(personBuilder.getResult());
+
+			var construct = PersonDirector.construct.uncurryThis();
+			construct({
+				builder: {
+					buildHead: function() { console.log('build HTML head'); },
+					buildBody: function() { console.log('build HTML body'); },
+					buildHand: function() {},
+					buildFoot: function() {}
+				}
+			});
+
+			//curry this
+			//make function reused as method
+			var sayName = (function(self) { 
+				console.log('Hello, I\'m '+self.name+'!'); 
+				self.show();
+			}).curryThis();
+
+			var person = {
+				name: 'Jack',
+				sayName: sayName,
+				show: function() { this.dance(); },
+				dance: function() { console.log('I can dance.'); }
+			}
+			var robot = {
+				name: 'Robot',
+				sayName: sayName,
+				show: function() { this.sing(); },
+				sing: function() { console.log('I can sing a song.'); }
+			}
+
+			function afun(obj) {
+				obj.sayName();
+			}
+			afun(person);
+			afun(robot);
+
+			var programmer = $.extend(true, {}, person, {
+				name: 'Programmer',
+				show: function() { this.program(); },
+				program: function() { console.log('I can program.'); }
+			});
+			afun(programmer);
+
+		</script>
+	</body>
+</html>
