@@ -1,8 +1,8 @@
 # 鸭子类型(duck typing)
 ## what
 先来看看维基百科的解释：
-鸭子类型（duck typing）是动态类型的一种风格。在这种风格中，一个对象有效的语义，不是由继承自特定的类或实现特定的接口，而是由当前方法和属性的集合决定。
-在鸭子类型中，关注的不是对象的类型本身，而是它是如何使用的。
+> 鸭子类型（duck typing）是动态类型的一种风格。在这种风格中，一个对象有效的语义，不是由继承自特定的类或实现特定的接口，而是由当前方法和属性的集合决定。<br>
+> 在鸭子类型中，关注的不是对象的类型本身，而是它是如何使用的。
 
 duck typing是为动态类型而生的，尽管很多静态语言或提供，或支持，或模拟duck typing，但那些都不能完完全全发挥duck typing思想的精髓。
 
@@ -24,8 +24,8 @@ function foo() {
 }
 ```
 arguments不是Array类型，因此它没有slice方法，但是arguments对象满足了slice方法的一些条件：
-1. 有一个length属性，它的值是数值
-2. 通过0 ~ length索引这个对象都有值
+* 有一个length属性，它的值是数值
+* 通过0 ~ length索引这个对象都有值
 
 因此，arguments可以应用于slice方法，于是我们也可以这样用：
 ```javascript
@@ -111,14 +111,14 @@ var dc = $.extend({
 console.log(checkDuck(cd));  //yes, you are a duck.
 console.log(checkDuck(dc));  //sorry, you are not a duck that I want.
 ```
-如果把例子中一次extend看成oop中的一次继承，都是reuse了功能，但是对象extend的方式明显比oop的继承声明来的简单方便，而且灵活。
+如果把例子中一次extend看成oop中的一次继承，都是reuse了功能，但是对象extend的方式明显比oop的继承声明来的简单方便，而且灵活。<br>
 最后的两个例子展示了多继承也是一件轻松解决的事，但是多继承遇到的重复基类的问题也是会发生的，可以看到，extend方式用后面覆盖前面的方式来决定重复基类的归属。
 
 总而言之，在duck typing思想里，复用就是这么简单的事情，想怎么用就怎么用！
 
 ## 最最最核心关键——this
 duck typing思想的核心是对象的思想，而使得duck对象可以流通，复用，扩展的关键是this，要想让某个方法可以作用到duck对象，它的处理必须是围绕着this来进行的。
-> 有一个例外，就是方法可以围绕第一个参数来进行，了解c++ method是怎么实现的就知道了，在js称为科里化this(curry this)
+> 有一个例外，就是方法可以围绕第一个参数来进行，了解c++ method是怎么实现的就知道了，在js称为科里化this(curry this)<br>
 > 另：反科里化this(reverse curry this)的概念其实就是duck typing
 
 ```javascript
@@ -226,9 +226,9 @@ var anotherCounter = (function() {
 //this is the example of reserve curry this
 console.log(anotherCounter.add.call(step2Counter, 3).i);	//9
 ```
-从上面的综合例子可以看到在duck typing的思想下，counter的使用变得非常灵活：
-1. counter作为模块，被当作一个global对象（甚至是single对象，只要使用者遵守约定）使用
-2. 当需要一个新的counter时，可以很轻松地'new'一个出来，初始化并使用
+从上面的综合例子可以看到在duck typing的思想下，counter的使用变得非常灵活：<br>
+1. counter作为模块，被当作一个global对象（甚至是single对象，只要使用者遵守约定）使用<br>
+2. 当需要一个新的counter时，可以很轻松地'new'一个出来，初始化并使用<br>
 3. 扩展counter变得异常简单，甚至可以仅仅复用counter里的某个方法
 
 > 顺便介绍一下duck typing的检测方式
@@ -246,13 +246,13 @@ console.log($.isLike(step2Counter, counter));	//true
 ```
 实际上，这种检测并不可靠，因此一般不用，这里只做介绍
 
-应用duck typing的关键小结：
-1. 不要受类型概念的禁锢，万物皆对象，在javascript中本来就是万物皆对象的
-2. 尽可能把变量和方法成为对象的属性
+应用duck typing的关键小结：<br>
+1. 不要受类型概念的禁锢，万物皆对象，在javascript中本来就是万物皆对象的<br>
+2. 尽可能把变量和方法成为对象的属性<br>
 3. 处理围绕this进行
 
 ## duck typing 类型系统
-最开始就提到过，duck typing的致命弱点是代码可读性，确实，oop先入为主，深入人心，导致在动态语言javascript中出现了许多oop类型系统，使用对象模拟类型，进而模拟继承。js也提供了类似概念的构造函数模式，并通过new语法来支持。
+最开始就提到过，duck typing的致命弱点是代码可读性，确实，oop先入为主，深入人心，导致在动态语言javascript中出现了许多oop类型系统，使用对象模拟类型，进而模拟继承。js也提供了类似概念的构造函数模式，并通过new语法来支持。<br>
 oop是非常优秀的思想，借助它的另外一个最大的好处就是代码可读性，当你看到var o = new Obj()时，就立刻会想到这是生成一个对象，不用任何注释。类型系统亦是如此。
 
 那么，duck typing能不能学习一下呢？如何增强duck typing的代码可读性？个人得出的答案就是借助oop思想，基于duck typing思想构建oop类型系统，经过研究发现，这也并不复杂。最终得出的类型系统基础代码量也很少。
